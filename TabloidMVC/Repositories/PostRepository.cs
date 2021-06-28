@@ -244,9 +244,8 @@ namespace TabloidMVC.Repositories
 
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"UPDATE Post
-                                            SET IsDeleted = 1 
-                                            WHERE id = @id";
+                    cmd.CommandText = @"DELETE FROM Post 
+                                            WHERE Id = @id";
 
                     cmd.Parameters.AddWithValue("@id", id);
 
@@ -267,15 +266,22 @@ namespace TabloidMVC.Repositories
                                             SET Title = @title,
                                                 Content = @content,
                                                 ImageLocation = @imageLocation,
+                                                PublishDateTime = @publishDateTime,
                                                 CatergoryId = @catergoryId
                                              WHERE Id = @id";
 
                     cmd.Parameters.AddWithValue("@title", post.Title);
                     cmd.Parameters.AddWithValue("@content", post.Content);
-                    cmd.Parameters.AddWithValue("@imageLocation", DbUtils.ValueOrDBNull(post.ImageLocation));
-                    //cmd.Parameters.AddWithValue("@publishDateTime", post.PublishDateTime);
+                    cmd.Parameters.AddWithValue("@publishDateTime", post.PublishDateTime);
                     cmd.Parameters.AddWithValue("@catergoryId", post.CategoryId);
-                    //cmd.Parameters.AddWithValue("@id", post.Id);
+                    if (post.ImageLocation != null)
+                    {
+                        cmd.Parameters.AddWithValue("@imageLocation", post.ImageLocation);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@imageLocation", DBNull.Value);
+                    }
 
                     cmd.ExecuteNonQuery();
                 }
