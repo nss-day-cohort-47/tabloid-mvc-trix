@@ -26,7 +26,7 @@ namespace TabloidMVC.Repositories
                                c.UserProfileId, 
                                c.Subject, 
                                c.Content, 
-                               c.Create
+                               c.CreateDataTime
                         FROM Comment c
                                LEFT JOIN Post p on c.PostId = p.id
                         WHERE  c.PostId == p.Id
@@ -42,10 +42,13 @@ namespace TabloidMVC.Repositories
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             PostId = reader.GetInt32(reader.GetOrdinal("PostId")),
                             UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId")),
-                            Subject = reader.GetString(reader.GetOrdinal("ubject)
+                            Subject = reader.GetString(reader.GetOrdinal("Subject")),
+                            Content = reader.GetString(reader.GetOrdinal("Content")),
+                            CreateDataTime = reader.GetDateTime(reader.GetOrdinal("CreateDataTime")),
+
                           
 
-                        dogs.Add(dog);
+                      dogs.Add(dog);
                     }
 
                     reader.Close();
