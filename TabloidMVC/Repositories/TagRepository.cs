@@ -4,50 +4,53 @@ using TabloidMVC.Models;
 
 namespace TabloidMVC.Repositories
 {
-    public class CategoryRepository : BaseRepository, ICategoryRepository
+    public class TagRepository : BaseRepository, ITagRepository
     {
-        public CategoryRepository(IConfiguration config) : base(config) { }
-        public List<Category> GetAll()
+        public TagRepository(IConfiguration config) : base(config) { }
+        public List<Tag> GetAll()
         {
             using (var conn = Connection)
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT id, name FROM Category";
+                    cmd.CommandText = "SELECT id, name FROM Tag";
                     var reader = cmd.ExecuteReader();
 
-                    var categories = new List<Category>();
+                    var tags = new List<Tag>();
 
                     while (reader.Read())
                     {
-                        categories.Add(new Category()
+                        tags.Add(new Tag()
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("name")),
+                            Name = reader.GetString(reader.GetOrdinal("name"))
                         });
                     }
 
                     reader.Close();
 
-                    return categories;
+                    return tags;
                 }
             }
         }
 
-        public void Add(Category category)
+        public void AddTag(Tag tag)
         {
             using (var conn = Connection)
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"INSERT INTO Category (Name)
-                                        OUTPUT INSERTED.ID
-                                        VALUES (@name)";
-                    cmd.Parameters.AddWithValue("@name", category.Name);
+                    cmd.CommandText = @"
+                        INSERT INTO Tag ( 
+                            Name )
+                        OUTPUT INSERTED.ID
+                        VALUES (
+                            @Name )";
+                    cmd.Parameters.AddWithValue("@Name", tag.Name);
 
-                    category.Id = (int)cmd.ExecuteScalar();
+                    tag.Id = (int)cmd.ExecuteScalar();
                 }
             }
         }
