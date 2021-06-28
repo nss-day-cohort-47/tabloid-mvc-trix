@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using TabloidMVC.Models;
 
@@ -51,6 +52,26 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@Name", tag.Name);
 
                     tag.Id = (int)cmd.ExecuteScalar();
+                }
+            }
+        }
+
+        public void DeleteTag(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        DELETE FROM Tag
+                        WHERE Id = @id
+                    ";
+
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
