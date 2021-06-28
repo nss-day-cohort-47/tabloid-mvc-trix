@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
@@ -37,6 +38,27 @@ namespace TabloidMVC.Controllers
             try
             {
                 _tagRepository.AddTag(tag);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return View(tag);
+            }
+        }
+
+        public ActionResult DeleteTag(int id)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteTag(int id, Tag tag)
+        {
+            try
+            {
+                _tagRepository.DeleteTag(id);
 
                 return RedirectToAction("Index");
             }
