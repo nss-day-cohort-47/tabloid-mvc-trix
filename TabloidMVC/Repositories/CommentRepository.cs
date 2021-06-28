@@ -13,12 +13,12 @@ namespace TabloidMVC.Repositories
     {
         public CommentRepository(IConfiguration config) : base(config) { }
 
-        public List<Comment> GetAllPublishedComments()
+        public List<Comment> GetAllComments()
         {
-            using (var conn = Connection)
+            using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using (var cmd = conn.CreateCommand())
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
                         SELECT c.Id, 
@@ -26,11 +26,10 @@ namespace TabloidMVC.Repositories
                                c.UserProfileId, 
                                c.Subject, 
                                c.Content, 
-                               c.CreateDataTime
+                               c.CreateDateTime
                         FROM Comment c
                                LEFT JOIN Post p on c.PostId = p.id
-                        WHERE  c.PostId == p.Id
-                    ";
+                        WHERE  c.PostId = p.Id";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -44,16 +43,15 @@ namespace TabloidMVC.Repositories
                             UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId")),
                             Subject = reader.GetString(reader.GetOrdinal("Subject")),
                             Content = reader.GetString(reader.GetOrdinal("Content")),
-                            CreateDataTime = reader.GetDateTime(reader.GetOrdinal("CreateDataTime")),
+                            CreateDataTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
+                        };
 
-                          
-
-                      dogs.Add(dog);
+                        comments.Add(comment);
                     }
 
                     reader.Close();
 
-                    return dogs;
+                    return comments;
                 }
             }
         }
