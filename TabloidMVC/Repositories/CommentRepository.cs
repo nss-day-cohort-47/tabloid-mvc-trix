@@ -27,9 +27,7 @@ namespace TabloidMVC.Repositories
                                c.Subject, 
                                c.Content, 
                                c.CreateDateTime
-                        FROM Comment c
-                               LEFT JOIN Post p on c.PostId = p.id
-                        WHERE  c.PostId = p.Id";
+                        FROM Comment c";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -43,7 +41,7 @@ namespace TabloidMVC.Repositories
                             UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId")),
                             Subject = reader.GetString(reader.GetOrdinal("Subject")),
                             Content = reader.GetString(reader.GetOrdinal("Content")),
-                            CreateDataTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
+                            CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
                         };
 
                         comments.Add(comment);

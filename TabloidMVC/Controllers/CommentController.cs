@@ -21,8 +21,8 @@ namespace TabloidMVC.Controllers
         // GET: HomeController1
         public ActionResult Index()
         {
-            List<Comment> comment = _commentRepo.GetAllComments();
-            return View();
+            List<Comment> comments = _commentRepo.GetAllComments();
+            return View(comments);
         }
 
         // GET: HomeController1/Details/5
