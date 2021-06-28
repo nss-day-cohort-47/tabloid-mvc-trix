@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
+using System.Collections.Generic;
 using System.Security.Claims;
+using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
 
@@ -25,6 +28,13 @@ namespace TabloidMVC.Controllers
             var posts = _postRepository.GetAllPublishedPosts();
             return View(posts);
         }
+
+        /*public IActionResult MyPosts()
+        {
+            int userId = GetCurrentUserProfileId();
+            List<Post> posts = _postRepository.GetPostsByUser(userId);
+            return View(posts);
+        }*/
 
         public IActionResult Details(int id)
         {
@@ -66,6 +76,49 @@ namespace TabloidMVC.Controllers
                 vm.CategoryOptions = _categoryRepository.GetAll();
                 return View(vm);
             }
+        }
+
+        [Authorize]
+        public IActionResult Edit(int id)
+        {
+            Post post = _postRepository.GetPublishedPostById(id);
+
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            return View(post);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, Post post)
+        {
+            try
+            {
+                _postRepository.Update(post);
+
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View(post);
+            }
+        }
+
+        public ActionResult Delete(int id)
+        {
+            Post post = _postRepository.GetPublishedPostById(id);
+            return View(post);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, Post post)
+        {
+            _postRepository.Delete(id);
+            return RedirectToAction("Index");
         }
 
         private int GetCurrentUserProfileId()

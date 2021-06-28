@@ -132,32 +132,42 @@ namespace TabloidMVC.Repositories
             }
         }
 
-
-        public void Add(Post post)
+        public List<Post> GetPostsByUser(int userProfileId)
         {
-            using (var conn = Connection)
+            using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using (var cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"
-                        INSERT INTO Post (
-                            Title, Content, ImageLocation, CreateDateTime, PublishDateTime,
-                            IsApproved, CategoryId, UserProfileId )
-                        OUTPUT INSERTED.ID
-                        VALUES (
-                            @Title, @Content, @ImageLocation, @CreateDateTime, @PublishDateTime,
-                            @IsApproved, @CategoryId, @UserProfileId )";
-                    cmd.Parameters.AddWithValue("@Title", post.Title);
-                    cmd.Parameters.AddWithValue("@Content", post.Content);
-                    cmd.Parameters.AddWithValue("@ImageLocation", DbUtils.ValueOrDBNull(post.ImageLocation));
-                    cmd.Parameters.AddWithValue("@CreateDateTime", post.CreateDateTime);
-                    cmd.Parameters.AddWithValue("@PublishDateTime", DbUtils.ValueOrDBNull(post.PublishDateTime));
-                    cmd.Parameters.AddWithValue("@IsApproved", post.IsApproved);
-                    cmd.Parameters.AddWithValue("@CategoryId", post.CategoryId);
-                    cmd.Parameters.AddWithValue("@UserProfileId", post.UserProfileId);
 
-                    post.Id = (int)cmd.ExecuteScalar();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT p.Id, p.Title, p.Content, 
+                                              p.ImageLocation AS HeaderImage,
+                                              p.CreateDateTime, p.PublishDateTime, p.IsApproved,
+                                              p.CategoryId, p.UserProfileId,
+                                              c.[Name] AS CategoryName,
+                                              u.FirstName, u.LastName, u.DisplayName, 
+                                              u.Email, u.CreateDateTime, u.ImageLocation AS AvatarImage,
+                                              u.UserTypeId, 
+                                              ut.[Name] AS UserTypeName
+                                         FROM Post p
+                                              LEFT JOIN Category c ON p.CategoryId = c.id
+                                              LEFT JOIN UserProfile u ON p.UserProfileId = u.id
+                                              LEFT JOIN UserType ut ON u.UserTypeId = ut.id
+                                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME() AND @userId = u.id";
+
+                    cmd.Parameters.AddWithValue("@userId", userProfileId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    var posts = new List<Post>();
+
+                    while (reader.Read())
+                    {
+                        posts.Add(NewPostFromReader(reader));
+                    }
+                    reader.Close();
+
+                    return posts;
                 }
             }
         }
@@ -196,6 +206,86 @@ namespace TabloidMVC.Repositories
                     }
                 }
             };
+        }
+        public void Add(Post post)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        INSERT INTO Post (
+                            Title, Content, ImageLocation, CreateDateTime, PublishDateTime,
+                            IsApproved, CategoryId, UserProfileId )
+                        OUTPUT INSERTED.ID
+                        VALUES (
+                            @Title, @Content, @ImageLocation, @CreateDateTime, @PublishDateTime,
+                            @IsApproved, @CategoryId, @UserProfileId )";
+                    cmd.Parameters.AddWithValue("@Title", post.Title);
+                    cmd.Parameters.AddWithValue("@Content", post.Content);
+                    cmd.Parameters.AddWithValue("@ImageLocation", DbUtils.ValueOrDBNull(post.ImageLocation));
+                    cmd.Parameters.AddWithValue("@CreateDateTime", post.CreateDateTime);
+                    cmd.Parameters.AddWithValue("@PublishDateTime", DbUtils.ValueOrDBNull(post.PublishDateTime));
+                    cmd.Parameters.AddWithValue("@IsApproved", post.IsApproved);
+                    cmd.Parameters.AddWithValue("@CategoryId", post.CategoryId);
+                    cmd.Parameters.AddWithValue("@UserProfileId", post.UserProfileId);
+
+                    post.Id = (int)cmd.ExecuteScalar();
+                }
+            }
+        }
+
+        public void Delete(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM Post 
+                                            WHERE Id = @id";
+
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void Update(Post post)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Post
+                                            SET Title = @title,
+                                                Content = @content,
+                                                ImageLocation = @imageLocation,
+                                                PublishDateTime = @publishDateTime,
+                                                CatergoryId = @catergoryId
+                                             WHERE Id = @id";
+
+                    cmd.Parameters.AddWithValue("@title", post.Title);
+                    cmd.Parameters.AddWithValue("@content", post.Content);
+                    cmd.Parameters.AddWithValue("@publishDateTime", post.PublishDateTime);
+                    cmd.Parameters.AddWithValue("@catergoryId", post.CategoryId);
+                    if (post.ImageLocation != null)
+                    {
+                        cmd.Parameters.AddWithValue("@imageLocation", post.ImageLocation);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@imageLocation", DBNull.Value);
+                    }
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }
