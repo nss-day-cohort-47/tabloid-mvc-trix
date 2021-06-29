@@ -129,7 +129,7 @@ namespace TabloidMVC.Repositories
             }
         }
 
-        public List<Post> GetPostsByUser(int userProfileId)
+        public List<Post> GetAllPostsByUser(int userProfileId)
         {
             using (SqlConnection conn = Connection)
             {
@@ -150,7 +150,8 @@ namespace TabloidMVC.Repositories
                                               LEFT JOIN Category c ON p.CategoryId = c.id
                                               LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME() AND @userId = u.id";
+                                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME() AND @userId = u.id
+                                        ORDER BY PublishDateTime DESC";
 
                     cmd.Parameters.AddWithValue("@userId", userProfileId);
 
@@ -251,7 +252,7 @@ namespace TabloidMVC.Repositories
             }
         }
 
-        public void Update(Post post)
+        public void Edit(Post post)
         {
             using (SqlConnection conn = Connection)
             {
@@ -264,13 +265,13 @@ namespace TabloidMVC.Repositories
                                                 Content = @content,
                                                 ImageLocation = @imageLocation,
                                                 PublishDateTime = @publishDateTime,
-                                                CatergoryId = @catergoryId
+                                                CategoryId = @categoryId
                                              WHERE Id = @id";
 
                     cmd.Parameters.AddWithValue("@title", post.Title);
                     cmd.Parameters.AddWithValue("@content", post.Content);
-                    cmd.Parameters.AddWithValue("@publishDateTime", post.PublishDateTime);
-                    cmd.Parameters.AddWithValue("@catergoryId", post.CategoryId);
+                    cmd.Parameters.AddWithValue("@categoryId", post.CategoryId);
+
                     if (post.ImageLocation != null)
                     {
                         cmd.Parameters.AddWithValue("@imageLocation", post.ImageLocation);
@@ -279,6 +280,17 @@ namespace TabloidMVC.Repositories
                     {
                         cmd.Parameters.AddWithValue("@imageLocation", DBNull.Value);
                     }
+
+                    if (post.PublishDateTime != null)
+                    {
+                        cmd.Parameters.AddWithValue("@publishDateTime", post.PublishDateTime);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@publishDateTime", DBNull.Value);
+                    }
+
+                    cmd.Parameters.AddWithValue("@id", post.Id);
 
                     cmd.ExecuteNonQuery();
                 }
