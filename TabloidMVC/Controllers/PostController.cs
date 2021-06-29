@@ -29,6 +29,7 @@ namespace TabloidMVC.Controllers
             return View(posts);
         }
 
+        // Starter for the 'My Post' right now it is not working.
         public IActionResult MyPosts()
         {
             int userId = GetCurrentUserProfileId();
@@ -78,18 +79,19 @@ namespace TabloidMVC.Controllers
             }
         }
 
-
+        // Edit and Delete will probably need to refactor, especially for a soft delete. 
         public IActionResult Edit(int id)
         {
             int userId = GetCurrentUserProfileId();
 
             Post post = _postRepository.GetPublishedPostById(id);
 
+            // If the post has null value or it is not the user's post, they shall not pass
             if (post == null || userId != post.UserProfileId)
             {
                 return NotFound();
             }
-
+            // However, if one of those is true then return the post for editing.
             return View(post);
         }
 
@@ -97,7 +99,8 @@ namespace TabloidMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Post post)
         {
-
+            // Since we only want the authenticated, authorized logged in user to edit the post
+            // then] we can just go directly to edit the post and save it.
             post.UserProfileId = GetCurrentUserProfileId();
             _postRepository.Edit(post);
             return RedirectToAction("Index");
