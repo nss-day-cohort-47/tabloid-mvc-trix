@@ -29,7 +29,9 @@ namespace TabloidMVC.Repositories
                                c.CreateDateTime
                         FROM Comment c
                              LEFT JOIN Post p ON p.Id = c.PostId
-                        WHERE p.Id = c.PostId";
+                        WHERE p.Id = @id";
+
+                    cmd.Parameters.AddWithValue("@id", id);
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
