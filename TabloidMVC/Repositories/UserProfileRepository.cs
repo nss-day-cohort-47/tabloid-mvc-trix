@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using TabloidMVC.Models;
 using TabloidMVC.Utils;
 
@@ -7,6 +9,49 @@ namespace TabloidMVC.Repositories
     public class UserProfileRepository : BaseRepository, IUserProfileRepository
     {
         public UserProfileRepository(IConfiguration config) : base(config) { }
+
+        public List<UserProfile> GetAllUserProfiles()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            SELECT u.id, u.DisplayName, u.FirstName, u.LastName, u.Email,
+                                 u.ImageLocation, u.UserTypeId, ut.[Name] 
+                            FROM UserProfile u
+                            LEFT JOIN UserType ut on ut.Id = u.UserTypeId
+                            ORDER BY u.DisplayName
+                            ";
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    List<UserProfile> userprofiles = new List<UserProfile>();
+                    while (reader.Read())
+                    {
+                        UserProfile userprofile = new UserProfile
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            DisplayName = reader.GetString(reader.GetOrdinal("DisplayName")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                            Email = reader.GetString(reader.GetOrdinal("Email")),
+                            ImageLocation = reader.IsDBNull(reader.GetOrdinal("ImageLocation")) ? "Image was not found" : reader.GetString(reader.GetOrdinal("ImageLocation")),
+                           UserType = new UserType
+                            {
+                                Name = reader.GetString(reader.GetOrdinal("Name"))
+                            }
+                        };
+
+                        userprofiles.Add(userprofile);
+                    }
+                    reader.Close();
+
+                    return userprofiles;
+                }
+            }
+        }
 
         public UserProfile GetByEmail(string email)
         {
