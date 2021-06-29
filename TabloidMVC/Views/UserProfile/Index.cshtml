@@ -24,7 +24,7 @@
                     @Html.DisplayNameFor(model => model.Email)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.UserTypeId)
+                    @Html.DisplayNameFor(model => model.UserType)
                 </th>
                 <th></th>
             </tr>
@@ -43,7 +43,7 @@
                         @Html.DisplayFor(modelItem => item.Email)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.UserTypeId)
+                        @Html.DisplayFor(modelItem => item.UserType.Name)
                     </td>
                     <td>
                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary mx-1" title="View">
