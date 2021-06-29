@@ -44,8 +44,8 @@ namespace TabloidMVC.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                            SELECT ID, Name
-                            FROM Dog
+                            SELECT Id, Name
+                            FROM Category
                             WHERE Id = @id
                         ";
 
@@ -64,6 +64,7 @@ namespace TabloidMVC.Repositories
                         reader.Close();
                         return category;
                     }
+                    return null;
                 }
             }
         }
@@ -91,7 +92,7 @@ namespace TabloidMVC.Repositories
             {
                 conn.Open();
 
-                using (SqlCommand cmd = conn.CreateCommand())
+                using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
                                 DELETE FROM Category
