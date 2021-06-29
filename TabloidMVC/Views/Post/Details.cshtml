@@ -9,13 +9,14 @@
         <section class="px-3">
             <div class="row justify-content-between">
                 <h1 class="text-secondary">@Model.Title</h1>
-                <h1 class="text-black-50">@Model.Category.Name</h1>
+                <h1 class="text-black-50">@Model.Category.Name</h1>`
             </div>
             <div class="row justify-content-between">
                 <p class="text-secondary">Written by @Model.UserProfile.DisplayName</p>
                 <p class="text-black-50">Published on @Html.DisplayFor(model => model.PublishDateTime)</p>
             </div>
-            <div class="row">
+            <div class="row">   
+                <a class="btn btn-primary" asp-controller="Comment" asp-action="Index" asp-route-id="@Model.Id">Comments </a>         
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Edit">
                     <i class="fas fa-pencil-alt"></i>
                 </a>
