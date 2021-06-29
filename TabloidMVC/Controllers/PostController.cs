@@ -82,28 +82,35 @@ namespace TabloidMVC.Controllers
         // Edit and Delete will probably need to refactor, especially for a soft delete. 
         public IActionResult Edit(int id)
         {
-            int userId = GetCurrentUserProfileId();
+          
+            var vm = new PostCreateViewModel();
+            vm.CategoryOptions = _categoryRepository.GetAll();
+            vm.Post = _postRepository.GetPublishedPostById(id);
 
-            Post post = _postRepository.GetPublishedPostById(id);
-
-            // If the post has null value or it is not the user's post, they shall not pass
-            if (post == null || userId != post.UserProfileId)
+            if (vm == null )
             {
                 return NotFound();
             }
-            // However, if one of those is true then return the post for editing.
-            return View(post);
+            
+            return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Post post)
+        public ActionResult Edit(int id, PostCreateViewModel vm)
         {
-            // Since we only want the authenticated, authorized logged in user to edit the post
-            // then] we can just go directly to edit the post and save it.
-            post.UserProfileId = GetCurrentUserProfileId();
-            _postRepository.Edit(post);
-            return RedirectToAction("Index");
+            try
+            {
+
+                _postRepository.Edit(vm.Post);
+
+                return RedirectToAction("Details", new { id = vm.Post.Id });
+            }
+            catch
+            {
+                vm.CategoryOptions = _categoryRepository.GetAll();
+                return View(vm);
+            }
         }
 
         public ActionResult Delete(int id)
