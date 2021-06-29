@@ -8,6 +8,6 @@ namespace TabloidMVC.Repositories
 {
     public interface ICommentRepository
     {
-        public List<Comment> GetAllComments();
+        public List<Comment> GetCommentsById(int id);
     }
 }

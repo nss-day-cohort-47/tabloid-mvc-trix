@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using TabloidMVC.Models;
 using TabloidMVC.Utils;
@@ -278,7 +279,7 @@ namespace TabloidMVC.Repositories
                     }
                     else
                     {
-                        cmd.Parameters.AddWithValue("@imageLocation", DBNull.Value);
+                        cmd.Parameters.AddWithValue("@imageLocation", System.DBNull.Value);
                     }
 
                     if (post.PublishDateTime != null)

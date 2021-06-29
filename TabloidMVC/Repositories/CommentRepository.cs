@@ -13,7 +13,7 @@ namespace TabloidMVC.Repositories
     {
         public CommentRepository(IConfiguration config) : base(config) { }
 
-        public List<Comment> GetAllComments()
+        public List<Comment> GetCommentsById(int id)
         {
             using (SqlConnection conn = Connection)
             {
@@ -27,7 +27,9 @@ namespace TabloidMVC.Repositories
                                c.Subject, 
                                c.Content, 
                                c.CreateDateTime
-                        FROM Comment c";
+                        FROM Comment c
+                             LEFT JOIN Post p ON p.Id = c.PostId
+                        WHERE p.Id = c.PostId";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
