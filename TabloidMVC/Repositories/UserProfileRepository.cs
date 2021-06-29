@@ -98,5 +98,18 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
+        public void CreateUser(UserProfile user)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"";
+                }
+            }
+        }
     }
 }
