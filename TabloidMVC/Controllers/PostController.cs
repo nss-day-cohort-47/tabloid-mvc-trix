@@ -85,10 +85,10 @@ namespace TabloidMVC.Controllers
             int userId = GetCurrentUserProfileId();
             var vm = new PostCreateViewModel();
             vm.CategoryOptions = _categoryRepository.GetAll();
-            Post post = _postRepository.GetPublishedPostById(id);
+            vm.Post = _postRepository.GetPublishedPostById(id);
 
             // If the post has null value or it is not the user's post, they shall not pass
-            if (post == null || userId != post.UserProfileId)
+            if (vm == null )
             {
                 return NotFound();
             }
