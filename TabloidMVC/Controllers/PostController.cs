@@ -30,7 +30,7 @@ namespace TabloidMVC.Controllers
         }
 
         // Starter for the 'My Post' right now it is not working.
-        public IActionResult MyPosts()
+        public IActionResult MyPosts(int userProfileId)
         {
             int userId = GetCurrentUserProfileId();
             var posts = _postRepository.GetAllPostsByUser(userId);

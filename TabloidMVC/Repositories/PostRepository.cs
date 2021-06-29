@@ -10,6 +10,8 @@ namespace TabloidMVC.Repositories
     public class PostRepository : BaseRepository, IPostRepository
     {
         public PostRepository(IConfiguration config) : base(config) { }
+
+        // Index of all post
         public List<Post> GetAllPublishedPosts()
         {
             using (var conn = Connection)
@@ -162,7 +164,9 @@ namespace TabloidMVC.Repositories
 
                     while (reader.Read())
                     {
-                        posts.Add(NewPostFromReader(reader));
+                        Post post = null;
+                        post = NewPostFromReader(reader);
+                        posts.Add(post);
                     }
                     reader.Close();
 
@@ -206,6 +210,8 @@ namespace TabloidMVC.Repositories
                 }
             };
         }
+
+        // CRUD Functoinality Below
         public void Add(Post post)
         {
             using (var conn = Connection)
