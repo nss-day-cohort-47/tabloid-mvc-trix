@@ -29,12 +29,12 @@ namespace TabloidMVC.Controllers
             return View(posts);
         }
 
-        /*public IActionResult MyPosts()
+        public IActionResult MyPosts()
         {
             int userId = GetCurrentUserProfileId();
-            List<Post> posts = _postRepository.GetPostsByUser(userId);
+            var posts = _postRepository.GetAllPostsByUser(userId);
             return View(posts);
-        }*/
+        }
 
         public IActionResult Details(int id)
         {
@@ -70,7 +70,7 @@ namespace TabloidMVC.Controllers
                 _postRepository.Add(vm.Post);
 
                 return RedirectToAction("Details", new { id = vm.Post.Id });
-            } 
+            }
             catch
             {
                 vm.CategoryOptions = _categoryRepository.GetAll();
@@ -78,12 +78,14 @@ namespace TabloidMVC.Controllers
             }
         }
 
-        [Authorize]
+
         public IActionResult Edit(int id)
         {
+            int userId = GetCurrentUserProfileId();
+
             Post post = _postRepository.GetPublishedPostById(id);
 
-            if (post == null)
+            if (post == null || userId != post.UserProfileId)
             {
                 return NotFound();
             }
@@ -95,16 +97,10 @@ namespace TabloidMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Post post)
         {
-            try
-            {
-                _postRepository.Update(post);
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View(post);
-            }
+            post.UserProfileId = GetCurrentUserProfileId();
+            _postRepository.Edit(post);
+            return RedirectToAction("Index");
         }
 
         public ActionResult Delete(int id)
