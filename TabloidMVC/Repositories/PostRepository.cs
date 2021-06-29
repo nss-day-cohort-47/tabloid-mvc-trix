@@ -10,6 +10,8 @@ namespace TabloidMVC.Repositories
     public class PostRepository : BaseRepository, IPostRepository
     {
         public PostRepository(IConfiguration config) : base(config) { }
+
+        // Index of all post
         public List<Post> GetAllPublishedPosts()
         {
             using (var conn = Connection)
@@ -31,7 +33,9 @@ namespace TabloidMVC.Repositories
                               LEFT JOIN Category c ON p.CategoryId = c.id
                               LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME()";
+                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME()
+                        ORDER BY PublishDateTime DESC";
+
                     var reader = cmd.ExecuteReader();
 
                     var posts = new List<Post>();
@@ -152,7 +156,7 @@ namespace TabloidMVC.Repositories
                                               LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
                                         WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME() AND @userId = u.id
-                                        ORDER BY PublishDateTime DESC";
+                                        ORDER BY p.CreateDateTime DESC";
 
                     cmd.Parameters.AddWithValue("@userId", userProfileId);
 
@@ -162,7 +166,9 @@ namespace TabloidMVC.Repositories
 
                     while (reader.Read())
                     {
-                        posts.Add(NewPostFromReader(reader));
+                        Post post = null;
+                        post = NewPostFromReader(reader);
+                        posts.Add(post);
                     }
                     reader.Close();
 
@@ -206,6 +212,8 @@ namespace TabloidMVC.Repositories
                 }
             };
         }
+
+        // CRUD Functoinality Below
         public void Add(Post post)
         {
             using (var conn = Connection)
