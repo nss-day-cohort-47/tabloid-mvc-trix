@@ -83,7 +83,8 @@ namespace TabloidMVC.Controllers
         public IActionResult Edit(int id)
         {
             int userId = GetCurrentUserProfileId();
-
+            var vm = new PostCreateViewModel();
+            vm.CategoryOptions = _categoryRepository.GetAll();
             Post post = _postRepository.GetPublishedPostById(id);
 
             // If the post has null value or it is not the user's post, they shall not pass
@@ -99,11 +100,18 @@ namespace TabloidMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Post post)
         {
-            // Since we only want the authenticated, authorized logged in user to edit the post
-            // then] we can just go directly to edit the post and save it.
-            post.UserProfileId = GetCurrentUserProfileId();
-            _postRepository.Edit(post);
-            return RedirectToAction("Index");
+            try
+            {
+                post.UserProfileId = GetCurrentUserProfileId();
+
+                _postRepository.Edit(post);
+
+                return RedirectToAction("Details");
+            }
+            catch
+            {
+                return View(post);
+            }
         }
 
         public ActionResult Delete(int id)
