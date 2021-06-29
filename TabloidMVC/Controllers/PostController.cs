@@ -82,17 +82,16 @@ namespace TabloidMVC.Controllers
         // Edit and Delete will probably need to refactor, especially for a soft delete. 
         public IActionResult Edit(int id)
         {
-            int userId = GetCurrentUserProfileId();
+          
             var vm = new PostCreateViewModel();
             vm.CategoryOptions = _categoryRepository.GetAll();
             vm.Post = _postRepository.GetPublishedPostById(id);
 
-            // If the post has null value or it is not the user's post, they shall not pass
             if (vm == null )
             {
                 return NotFound();
             }
-            // However, if one of those is true then return the post for editing.
+            
             return View(vm);
         }
 
@@ -103,7 +102,6 @@ namespace TabloidMVC.Controllers
             try
             {
 
-                int userId = GetCurrentUserProfileId();
                 _postRepository.Edit(vm.Post);
 
                 return RedirectToAction("Details", new { id = vm.Post.Id });
