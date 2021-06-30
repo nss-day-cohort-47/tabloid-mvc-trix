@@ -95,5 +95,16 @@ namespace TabloidMVC.Controllers
                 return View(tag);
             }
         }
+
+        // /Tag/TagManagement
+        public ActionResult TagManagement(int PostId)
+        {
+            //var vm = new PostDetailsViewModel();
+            //vm.TagOptions = _tagRepository.GetAll();
+            //return View(vm);
+
+            var tags = _tagRepository.GetAll();
+            return View(tags);
+        }
     }
 }

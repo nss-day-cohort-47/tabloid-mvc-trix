@@ -41,10 +41,6 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Details(int id)
         {
-            var vm = new PostDetailsViewModel();
-            vm.TagOptions = _tagRepository.GetAll();
-            return View(vm);
-
             var post = _postRepository.GetPublishedPostById(id);
             if (post == null)
             {
