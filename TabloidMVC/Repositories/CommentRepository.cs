@@ -24,11 +24,13 @@ namespace TabloidMVC.Repositories
                         SELECT c.Id, 
                                c.PostId, 
                                c.UserProfileId, 
+                               u.Id,
                                c.Subject, 
                                c.Content, 
                                c.CreateDateTime
                         FROM Comment c
-                             LEFT JOIN Post p ON p.Id = c.PostId
+                             LEFT JOIN Post p ON p.Id = c.PostId  
+                             LEFT JOIN UserProfile u on u.Id = c.UserProfileId
                         WHERE p.Id = @id";
 
                     cmd.Parameters.AddWithValue("@id", id);

@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TabloidMVC.Models;
+using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
@@ -12,17 +14,30 @@ namespace TabloidMVC.Controllers
     public class CommentController : Controller
     {
         private readonly ICommentRepository _commentRepo;
+        private readonly IPostRepository _postRepository;
 
-        public CommentController(ICommentRepository commentRepository)
+        public CommentController(
+            ICommentRepository commentRepository,
+            IPostRepository postRepository)
         {
             _commentRepo = commentRepository;
+            _postRepository = postRepository;
         }
 
         // GET: HomeController1
-        public ActionResult Index(int id)
+        public ActionResult Index(int postid)
         {
-            List<Comment> comments = _commentRepo.GetCommentsById(id);
-            return View(comments);
+
+            Post post = _postRepository.GetPublishedPostById(postid);
+            List<Comment> comments = _commentRepo.GetCommentsById(postid);
+
+            CommentViewModel cvm = new CommentViewModel()
+            {
+                Post = post,
+                Comments = comments
+        };
+
+            return View(cvm);
         }
 
         // GET: HomeController1/Details/5
@@ -32,7 +47,7 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: HomeController1/Create
-        public ActionResult Create()
+        public ActionResult Create(int postid)
         {
             return View();
         }
@@ -44,6 +59,8 @@ namespace TabloidMVC.Controllers
         {
             try
             {
+                comment.UserProfileId = GetCurrentUserProfileId();
+                _commentRepo.AddComment(comment);
                 return RedirectToAction(("Index"));
             }
             catch (Exception ex)
@@ -92,6 +109,12 @@ namespace TabloidMVC.Controllers
             {
                 return View();
             }
+        }
+
+        private int GetCurrentUserProfileId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
         }
     }
 }
