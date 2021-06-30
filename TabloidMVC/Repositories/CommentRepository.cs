@@ -77,8 +77,8 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@postid", comment.PostId);
                     cmd.Parameters.AddWithValue("@userprofileid", comment.UserProfileId);
                     cmd.Parameters.AddWithValue("@subject", comment.Subject);
-                    cmd.Parameters.AddWithValue("@address", comment.Content);
-                    cmd.Parameters.AddWithValue("@neighborhoodId", comment.CreateDateTime);
+                    cmd.Parameters.AddWithValue("@content", comment.Content);
+                    cmd.Parameters.AddWithValue("@createdatetime", comment.CreateDateTime);
 
                     int id = (int)cmd.ExecuteScalar();
 

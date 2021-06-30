@@ -49,7 +49,9 @@ namespace TabloidMVC.Controllers
         // GET: HomeController1/Create
         public ActionResult Create(int postid)
         {
-            return View();
+            Comment comment = new Comment();
+            comment.PostId = postid;
+            return View(comment);
         }
 
         // POST: HomeController1/Create
@@ -58,8 +60,10 @@ namespace TabloidMVC.Controllers
         public ActionResult Create(Comment comment)
         {
             try
-            {
+            {   
+                CommentViewModel cvm = new CommentViewModel();
                 comment.UserProfileId = GetCurrentUserProfileId();
+                comment.CreateDateTime = DateTime.Now;
                 _commentRepo.AddComment(comment);
                 return RedirectToAction(("Index"));
             }
