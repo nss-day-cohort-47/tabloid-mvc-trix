@@ -18,6 +18,7 @@ namespace TabloidMVC.Controllers
             _userProfileRepository = userProfileRepository;
         }
 
+        // Login
         public IActionResult Login()
         {
             return View();
@@ -50,10 +51,40 @@ namespace TabloidMVC.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        // Register Account
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(UserProfile user)
+        {
+            var userProfile = _userProfileRepository.Add(user);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, userProfile.Id.ToString()),
+                new Claim(ClaimTypes.Email, userProfile.Email),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity));
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        // Logout
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
+
+
     }
 }
