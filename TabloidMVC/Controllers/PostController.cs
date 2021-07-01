@@ -16,11 +16,13 @@ namespace TabloidMVC.Controllers
     {
         private readonly IPostRepository _postRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ITagRepository _tagRepository;
 
-        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository)
+        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, ITagRepository tagRepository)
         {
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;
+            _tagRepository = tagRepository;
         }
 
         public IActionResult Index()
@@ -30,7 +32,7 @@ namespace TabloidMVC.Controllers
         }
 
         // Starter for the 'My Post' right now it is not working.
-        public IActionResult MyPosts()
+        public IActionResult MyPosts(int userProfileId)
         {
             int userId = GetCurrentUserProfileId();
             var posts = _postRepository.GetAllPostsByUser(userId);
@@ -60,6 +62,7 @@ namespace TabloidMVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(PostCreateViewModel vm)
         {
             try

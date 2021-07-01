@@ -33,3 +33,7 @@ VALUES (
 'There are those' + char(10) + 'who do not believe' + char(10) + 'C# is the best.' + char(10) + 'They are wrong.',
     'https://gizmodiva.com/wp-content/uploads/2017/10/SCOTT-A-WOODWARD_1SW1943-1170x689.jpg',SYSDATETIME(), SYSDATETIME(), 1, 1, 1);
 SET IDENTITY_INSERT [Post] OFF
+
+SET IDENTITY_INSERT [Comment] ON
+INSERT INTO Comment VALUES (1,1,'c#', 'cool article', '06/29/2021')
+INSERT INTO Comment VALUES (1,1,'reaction to C#', 'I strongly disagree', '06/29/2021')
