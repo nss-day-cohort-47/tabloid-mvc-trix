@@ -63,9 +63,10 @@ namespace TabloidMVC.Controllers
             {   
                 CommentViewModel cvm = new CommentViewModel();
                 comment.UserProfileId = GetCurrentUserProfileId();
+                //cvm.Post.Id = cvm.Comment.PostId;
                 comment.CreateDateTime = DateTime.Now;
                 _commentRepo.AddComment(comment);
-                return RedirectToAction(("Index"));
+                return RedirectToAction("Index", new { id = comment.PostId });
             }
             catch (Exception ex)
             {
@@ -74,46 +75,50 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: HomeController1/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
+        //public ActionResult Edit(int id)
+        //{
+        //    Comment comment = _commentRepo.GetCommentById(id);
+        //    return View(comment);
+        //}
 
         // POST: HomeController1/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit(int id, Comment comment)
+        //{
+        //    try
+        //    {
+        //        _commentRepo.UpdateComment(comment);
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    catch
+        //    {
+        //        return View(comment);
+        //    }
+        //}
 
         // GET: HomeController1/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+        //public ActionResult Delete(int id)
+        //{
+        //    Comment comment = _commentRepo.GetCommentById(id);
+        //    return View(comment);
+        //}
 
         // POST: HomeController1/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        //public ActionResult Delete(int id, Comment comment)
+        //{
+        //    try
+        //    {
+        //        _commentRepo.DeleteComment(id);
+        //        return RedirectToAction("Index", new { id = comment.PostId });
+        //    }
+        //    catch
+        //    {
+        //        return View(comment);
+        //    }
+        //}
 
         private int GetCurrentUserProfileId()
         {

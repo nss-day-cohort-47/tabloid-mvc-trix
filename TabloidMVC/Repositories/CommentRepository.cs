@@ -60,6 +60,52 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        //public Comment GetCommentById(int id)
+        //{
+        //    using (SqlConnection conn = Connection)
+        //    {
+        //        conn.Open();
+
+        //        using (SqlCommand cmd = conn.CreateCommand())
+        //        {
+        //            cmd.CommandText = @"
+        //                        SELECT c.Id,
+        //                        c.PostId,
+        //                        c.UserProfileId,
+        //                        c.Subject,
+        //                        c.Content,
+        //                        c.CreateDateTime
+        //                        FROM Comment c
+        //                        WHERE c.Id = @id";
+
+        //            cmd.Parameters.AddWithValue("@id", id);
+
+        //            SqlDataReader reader = cmd.ExecuteReader();
+
+        //            if (reader.Read())
+        //            {
+        //                Comment comment = new Comment()
+        //                {
+        //                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+        //                    PostId = reader.GetInt32(reader.GetOrdinal("PostId")),
+        //                    UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId")),
+        //                    Subject = reader.GetString(reader.GetOrdinal("Subject")),
+        //                    Content = reader.GetString(reader.GetOrdinal("Content")),
+        //                    CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime"))
+        //                };
+
+        //                reader.Close();
+        //                return comment;
+        //            }
+        //            else
+        //            {
+        //                reader.Close();
+        //                return null;
+        //            }
+        //        }
+        //    }
+        //}
+
         public void AddComment(Comment comment)
         {
             using (SqlConnection conn = Connection)
@@ -87,6 +133,49 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
+        //public void DeleteComment(int id)
+        //{
+        //    using (SqlConnection conn = Connection)
+        //    {
+        //        conn.Open();
+
+        //        using (SqlCommand cmd = conn.CreateCommand())
+        //        {
+        //            cmd.CommandText = @"
+        //                    DELETE FROM Comment
+        //                    WHERE Id = @id
+        //                ";
+
+        //            cmd.Parameters.AddWithValue("@id", id);
+
+        //            cmd.ExecuteNonQuery();
+        //        }
+        //    }
+        //}
+
+        //public void UpdateComment(Comment comment)
+        //{
+        //    using (SqlConnection conn = Connection)
+        //    {
+        //        conn.Open();
+
+        //        using (SqlCommand cmd = conn.CreateCommand())
+        //        {
+        //            cmd.CommandText = @"
+        //                    UPDATE Comment
+        //                    SET Subject = @Subject,
+        //                        Content = @Content
+        //                    WHERE Id = @id";
+
+        //            cmd.Parameters.AddWithValue("@Id", comment.Id);
+        //            cmd.Parameters.AddWithValue("@Subject", comment.Subject);
+        //            cmd.Parameters.AddWithValue("@Content", comment.Content);
+
+        //            cmd.ExecuteNonQuery();
+        //        }
+        //    }
+        //}
 
     }
 }
