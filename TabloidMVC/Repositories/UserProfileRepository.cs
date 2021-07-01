@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using TabloidMVC.Models;
 using TabloidMVC.Utils;
@@ -38,7 +39,7 @@ namespace TabloidMVC.Repositories
                             LastName = reader.GetString(reader.GetOrdinal("LastName")),
                             Email = reader.GetString(reader.GetOrdinal("Email")),
                             ImageLocation = reader.IsDBNull(reader.GetOrdinal("ImageLocation")) ? "Image was not found" : reader.GetString(reader.GetOrdinal("ImageLocation")),
-                           UserType = new UserType
+                            UserType = new UserType
                             {
                                 Name = reader.GetString(reader.GetOrdinal("Name"))
                             }
@@ -95,6 +96,43 @@ namespace TabloidMVC.Repositories
                     reader.Close();
 
                     return userProfile;
+                }
+            }
+        }
+
+        public void Add(UserProfile user)
+        {
+
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"INSERT INTO UserProfile (DisplayName, FirstName, LastName, Email, CreateDateTime, ImageLocation, UserTypeId)
+                                        OUTPUT INSERTED.ID
+                                        VALUES (@displayName, @firstName, @lastName, @email, GETDATE(), @imageLocation, 2);";
+
+
+                    cmd.Parameters.AddWithValue("@displayName", user.DisplayName);
+                    cmd.Parameters.AddWithValue("@firstName", user.FirstName);
+                    cmd.Parameters.AddWithValue("@lastName", user.LastName);
+                    cmd.Parameters.AddWithValue("@email", user.Email);
+                    
+              
+
+                    if (user.ImageLocation == null)
+                    {
+                        cmd.Parameters.AddWithValue("@imageLocation", DBNull.Value);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@imageLocation", user.ImageLocation);
+                    }
+
+                    int newlyCreatedUserId = (int)cmd.ExecuteScalar();
+
+                    user.Id = newlyCreatedUserId;
                 }
             }
         }
