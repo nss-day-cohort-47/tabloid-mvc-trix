@@ -61,12 +61,12 @@ namespace TabloidMVC.Controllers
         {
             try
             {   
-                CommentViewModel cvm = new CommentViewModel();
+                //CommentViewModel cvm = new CommentViewModel();
                 comment.UserProfileId = GetCurrentUserProfileId();
                 //cvm.Post.Id = cvm.Comment.PostId;
                 comment.CreateDateTime = DateTime.Now;
                 _commentRepo.AddComment(comment);
-                return RedirectToAction("Index", new { id = comment.PostId });
+                return RedirectToAction("Index", new { postid = comment.PostId });
             }
             catch (Exception ex)
             {
