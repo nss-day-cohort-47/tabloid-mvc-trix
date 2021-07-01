@@ -113,7 +113,7 @@ namespace TabloidMVC.Controllers
             try
             {
                 _tagRepository.AddTagToPost(post, tag);
-                return View();
+                return RedirectToAction("TagManagement", new { id = post});
             }
             catch (Exception ex)
             {

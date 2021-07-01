@@ -144,7 +144,7 @@ namespace TabloidMVC.Repositories
                                                        VALUES (@postId, @tagId)";
                     cmd.Parameters.AddWithValue("@postId", post);
                     cmd.Parameters.AddWithValue("@tagId", tag);
-                    int id = (int)cmd.ExecuteScalar();
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
