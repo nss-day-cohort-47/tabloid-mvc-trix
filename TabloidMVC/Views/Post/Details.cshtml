@@ -16,10 +16,7 @@
                 <p class="text-black-50">Published on @Html.DisplayFor(model => model.PublishDateTime)</p>
             </div>
             <div class="row">   
-                <a class="btn btn-primary" asp-controller="Comment" asp-action="Index" asp-route-id="@Model.Id">Comments </a>
-                <a asp-controller="Tag" asp-action="TagManagement" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Manage Tags">
-                    <i class="fas fa-pencil-alt"></i>
-                </a>
+                <a class="btn btn-primary" asp-controller="Comment" asp-action="Index" asp-route-postid="@Model.Id">Comments </a>         
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Edit">
                     <i class="fas fa-pencil-alt"></i>
                 </a>

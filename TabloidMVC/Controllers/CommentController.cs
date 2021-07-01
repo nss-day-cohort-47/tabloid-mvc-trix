@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TabloidMVC.Models;
+using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
@@ -12,17 +14,30 @@ namespace TabloidMVC.Controllers
     public class CommentController : Controller
     {
         private readonly ICommentRepository _commentRepo;
+        private readonly IPostRepository _postRepository;
 
-        public CommentController(ICommentRepository commentRepository)
+        public CommentController(
+            ICommentRepository commentRepository,
+            IPostRepository postRepository)
         {
             _commentRepo = commentRepository;
+            _postRepository = postRepository;
         }
 
         // GET: HomeController1
-        public ActionResult Index(int id)
+        public ActionResult Index(int postid)
         {
-            List<Comment> comments = _commentRepo.GetCommentsById(id);
-            return View(comments);
+
+            Post post = _postRepository.GetPublishedPostById(postid);
+            List<Comment> comments = _commentRepo.GetCommentsById(postid);
+
+            CommentViewModel cvm = new CommentViewModel()
+            {
+                Post = post,
+                Comments = comments
+        };
+
+            return View(cvm);
         }
 
         // GET: HomeController1/Details/5
@@ -32,66 +47,83 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: HomeController1/Create
-        public ActionResult Create()
+        public ActionResult Create(int postid)
         {
-            return View();
+            Comment comment = new Comment();
+            comment.PostId = postid;
+            return View(comment);
         }
 
         // POST: HomeController1/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Comment comment)
         {
             try
-            {
-                return RedirectToAction(nameof(Index));
+            {   
+                //CommentViewModel cvm = new CommentViewModel();
+                comment.UserProfileId = GetCurrentUserProfileId();
+                //cvm.Post.Id = cvm.Comment.PostId;
+                comment.CreateDateTime = DateTime.Now;
+                _commentRepo.AddComment(comment);
+                return RedirectToAction("Index", new { postid = comment.PostId });
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return View(comment);
             }
         }
 
         // GET: HomeController1/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
+        //public ActionResult Edit(int id)
+        //{
+        //    Comment comment = _commentRepo.GetCommentById(id);
+        //    return View(comment);
+        //}
 
         // POST: HomeController1/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit(int id, Comment comment)
+        //{
+        //    try
+        //    {
+        //        _commentRepo.UpdateComment(comment);
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    catch
+        //    {
+        //        return View(comment);
+        //    }
+        //}
 
         // GET: HomeController1/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+        //public ActionResult Delete(int id)
+        //{
+        //    Comment comment = _commentRepo.GetCommentById(id);
+        //    return View(comment);
+        //}
 
         // POST: HomeController1/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        //public ActionResult Delete(int id, Comment comment)
+        //{
+        //    try
+        //    {
+        //        _commentRepo.DeleteComment(id);
+        //        return RedirectToAction("Index", new { id = comment.PostId });
+        //    }
+        //    catch
+        //    {
+        //        return View(comment);
+        //    }
+        //}
+
+        private int GetCurrentUserProfileId()
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
         }
     }
 }
