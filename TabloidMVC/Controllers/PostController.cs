@@ -60,6 +60,7 @@ namespace TabloidMVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(PostCreateViewModel vm)
         {
             try

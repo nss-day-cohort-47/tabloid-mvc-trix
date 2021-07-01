@@ -17,6 +17,7 @@ namespace TabloidMVC.Controllers
         {
             _userProfileRepo = userProfileRepository;
         }
+
         // GET: UserProfileController
         public ActionResult Index()
         {
