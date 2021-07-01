@@ -100,6 +100,53 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        public UserProfile GetUserById(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                                SELECT u.id, u.FirstName, u.LastName, u.Email, u.DisplayName,
+                                        u.CreateDateTime, u.ImageLocation, u.UserTypeId,
+                                        ut.Name AS UserTypeName
+                                FROM UserProfile u
+                                LEFT JOIN Usertype ut ON u.UserTypeId = ut.id
+                                WHERE u.id = @id
+                                ";
+
+                    cmd.Parameters.AddWithValue("@id", id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        UserProfile userProfile = new UserProfile()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            DisplayName = reader.GetString(reader.GetOrdinal("DisplayName")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                            Email = reader.GetString(reader.GetOrdinal("Email")),
+                            CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
+                            ImageLocation = reader.IsDBNull(reader.GetOrdinal("ImageLocation")) ? null :
+                            reader.GetString(reader.GetOrdinal("ImageLocation")),
+                            UserTypeId = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
+                            UserType = new UserType()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
+                                Name = reader.GetString(reader.GetOrdinal("UserTypeName"))
+                            }
+                        };
+                        reader.Close();
+                        return userProfile;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                  }
+                }
+                
         public void Add(UserProfile user)
         {
 
