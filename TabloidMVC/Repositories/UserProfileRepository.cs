@@ -144,9 +144,10 @@ namespace TabloidMVC.Repositories
                     {
                         return null;
                     }
-                  }
                 }
-                
+            }
+        }
+
         public void Add(UserProfile user)
         {
 
@@ -165,8 +166,8 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@firstName", user.FirstName);
                     cmd.Parameters.AddWithValue("@lastName", user.LastName);
                     cmd.Parameters.AddWithValue("@email", user.Email);
-                    
-              
+
+
 
                     if (user.ImageLocation == null)
                     {
